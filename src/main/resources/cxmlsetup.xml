@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.014/cXML.dtd">
+<cXML payloadID="1211221788.71299@ip-10-251-122-83" timestamp="Mon May 19 18:29:48 +0000 2008" xml:lang="en-US">
+    <Header>
+        <From>
+            <Credential domain="DUNS">
+                <Identity>io/jgodara/PunchoutTool</Identity>
+            </Credential>
+        </From>
+        <To>
+            <Credential domain="DUNS">
+                <Identity>io/jgodara/PunchoutTool</Identity>
+            </Credential>
+        </To>
+        <Sender>
+            <Credential domain="${potool.domain}">
+                <Identity>${potool.ident}</Identity>
+                <SharedSecret>${potool.secret}</SharedSecret>
+            </Credential>
+            <UserAgent>io/jgodara/PunchoutTool</UserAgent>
+        </Sender>
+    </Header>
+    <Request>
+        <PunchOutSetupRequest operation="create">
+            <BuyerCookie>${potool.cookie}</BuyerCookie>
+            <Extrinsic name="FirstName">John</Extrinsic>
+            <Extrinsic name="LastName">Doe</Extrinsic>
+            <Extrinsic name="UniqueName">johndoe@jgodara.io</Extrinsic>
+            <Extrinsic name="UserEmail">johndoe@jgodara.io</Extrinsic>
+            <Extrinsic name="User">john.doe</Extrinsic>
+            <Extrinsic name="BusinessUnit">POTOOL</Extrinsic>
+            <BrowserFormPost>
+                <URL>http://localhost:9795/callback/cxml</URL>
+            </BrowserFormPost>
+        </PunchOutSetupRequest>
+    </Request>
+</cXML>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Punchout Tool</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}">
+</head>
+<body>
+
+<div class="container">
+    <div th:include="frag :: header"></div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-sm-offset-4 col-sm-8"><h2>cXML Punchout</h2></div>
+            <form class="form-horizontal" method="post" action="/post/cxml">
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="url">URL:</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="url" class="form-control" id="url">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="domain">Domain:</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="domain" class="form-control" id="domain">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="networkid">Network ID:</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="networkid" class="form-control" id="networkid">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4" for="shared">Shared Secret:</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="shared" class="form-control" id="shared">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="ol-sm-12"><h2>OCI Punchout</h2></div>
+            <form class="form-horizontal" method="post" onsubmit="javascript:doSubmit(); return false;">
+                <div class="form-group">
+                    <label class="control-label col-sm-6" for="ociurl">OCI Punchout URL:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="ociurl">
+                    </div>
+                </div>
+                <div id="form-groups">
+                    <div class="form-group" id="form-group_0">
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="parameter_0" value="HOOK_URL">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="value_0" value="http://localhost:9795/callback/oci">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <input  type="submit" class="btn btn-success">
+                        <button class="btn btn-info" onclick="javascript:addParameter(); return false;">Add Parameter</button>
+                        <button class="btn btn-danger" onclick="javascript:removeParameter(); return false;">Delete Parameter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/webjars/jquery/1.12.0/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+
+<script>
+    var count = 0;
+    function addParameter() {
+        jQuery('#form-groups').append(getTemplate(++count));
+    }
+
+    function removeParameter() {
+        jQuery('#form-group_' + count--).remove();
+    }
+
+    function doSubmit() {
+        var params = {};
+
+        var ociUrl = jQuery('#ociurl').val();
+
+        if (ociUrl == null || ociUrl == undefined || ociUrl == '') {
+            alert('OCI URL ' + i + ' is empty!');
+
+            return false;
+        }
+
+        for (var i = 0 ; i <= count ; i++) {
+            var param = jQuery('#parameter_' + i).val();
+            var val = jQuery('#value_' + i).val();
+
+            if (param == null || param == undefined || param == '') {
+                alert('Parameter ' + i + ' is empty!');
+
+                return false;
+            }
+            if (val == null || val == undefined || val == '') {
+                alert('Value ' + i + ' is empty!');
+
+                return false;
+            }
+
+            params['' + param] = val;
+        }
+
+        post(ociUrl, params);
+    }
+
+    function getTemplate(c) {
+        return '<div class="form-group" id="form-group_' + c + '">\
+            <div class="col-sm-6">\
+            <input type="text" class="form-control" id="parameter_' + c + '">\
+            </div>\
+            <div class="col-sm-6">\
+            <input type="text" class="form-control" id="value_' + c + '">\
+            </div>\
+            </div>';
+    }
+
+
+    /**
+     * This function makes a form on the document whenever called, this form then
+     * submits to the path passed as a parameter. This mimics creation of a POST
+     * request.
+     *
+     * @param path
+     *            The path to make a POST request.
+     * @param params
+     *            Parameters to pass with the request as JSON object.
+     * @param method
+     *            GET/POST, if not specified, it is defaulted as post.
+     */
+    function post(path, params, method) {
+        method = method || "post"; // Set method to post by default if not
+        // specified.
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for ( var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
+        }
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+</body>
+</html>
